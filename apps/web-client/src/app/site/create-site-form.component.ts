@@ -1,9 +1,16 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { Site } from './site.model';
+
+export interface CreateSiteModel {
+  id: string;
+}
+
+export interface CreateSitePayload {
+  id: string;
+}
 
 @Component({
   selector: 'safety-check-app-create-site-form',
@@ -17,6 +24,7 @@ import { Site } from './site.model';
           #siteId="ngModel"
           [(ngModel)]="site.id"
           required
+          [disabled]="disabled"
         />
         <mat-error *ngIf="siteId.invalid && (siteId.dirty || siteId.touched)"
           >Site ID is required.</mat-error
@@ -28,7 +36,7 @@ import { Site } from './site.model';
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="createSiteForm.invalid"
+          [disabled]="createSiteForm.invalid || disabled"
         >
           Create
         </button>
@@ -39,21 +47,17 @@ import { Site } from './site.model';
   standalone: true,
 })
 export class CreateSiteFormComponent {
-  @Output() createSite = new EventEmitter<Site>();
+  @Input() disabled = false;
+  @Output() createSite = new EventEmitter<CreateSitePayload>();
   @Output() cancel = new EventEmitter<void>();
 
-  site: Site = { id: '' };
+  site: CreateSiteModel = { id: '' };
 
   onCreateSite() {
     this.createSite.emit(this.site);
-    this.resetForm();
   }
 
   onCancel() {
     this.cancel.emit();
-  }
-
-  private resetForm(): void {
-    this.site = { id: '' }; // Reset the form
   }
 }

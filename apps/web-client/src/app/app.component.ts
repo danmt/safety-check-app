@@ -9,13 +9,9 @@ import {
   HdWalletAdapterDirective,
 } from '@heavy-duty/wallet-adapter-cdk';
 import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-material';
-import { PublicKey } from '@solana/web3.js';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { combineLatest, filter, firstValueFrom, map } from 'rxjs';
+import { ConnectionService } from './core';
 import { IDL, SafetyCheckManager } from './safety_check_manager';
-
-const SAFETY_CHECK_MANAGER_PROGRAM_ID = new PublicKey(
-  '4WJv7r8mzjydzhYRdG3yCGEmZmQT1KQUyxFrT1keaBWC'
-);
 
 @Component({
   selector: 'safety-check-app-root',
@@ -94,13 +90,10 @@ const SAFETY_CHECK_MANAGER_PROGRAM_ID = new PublicKey(
 export class AppComponent implements OnInit {
   private readonly _connectionStore = inject(ConnectionStore);
   private readonly _walletStore = inject(WalletStore);
-  private readonly _rpcEndpoint = new BehaviorSubject('http://localhost:8899');
-  private readonly _programId = new BehaviorSubject(
-    '4WJv7r8mzjydzhYRdG3yCGEmZmQT1KQUyxFrT1keaBWC'
-  );
+  private readonly _connectionService = inject(ConnectionService);
 
-  readonly rpcEndpoint$ = this._rpcEndpoint.asObservable();
-  readonly programId$ = this._programId.asObservable();
+  readonly rpcEndpoint$ = this._connectionService.rpcEndpoint$;
+  readonly programId$ = this._connectionService.programId$;
   readonly provider$ = combineLatest([
     this._connectionStore.connection$,
     this._walletStore.anchorWallet$,
@@ -117,29 +110,32 @@ export class AppComponent implements OnInit {
       );
     })
   );
-  readonly program$ = this.provider$.pipe(
-    map((provider) => {
-      if (provider === null) {
+  readonly program$ = combineLatest([this.programId$, this.provider$]).pipe(
+    map(([programId, provider]) => {
+      if (programId === null || provider === null) {
         return null;
       }
 
-      return new Program<SafetyCheckManager>(
-        IDL,
-        SAFETY_CHECK_MANAGER_PROGRAM_ID,
-        provider
-      );
+      return new Program<SafetyCheckManager>(IDL, programId, provider);
     })
   );
 
   ngOnInit() {
     this._connectionStore.setEndpoint(this.rpcEndpoint$);
+
+    firstValueFrom(
+      this.program$.pipe(filter((program) => program !== null))
+    ).then((a) => {
+      console.log(a);
+      a?.account.site.all().then((a) => console.log(a));
+    });
   }
 
   onRpcEndpointChange(rpcEndpoint: string) {
-    this._rpcEndpoint.next(rpcEndpoint);
+    this._connectionService.setRpcEndpoint(rpcEndpoint);
   }
 
   onProgramIdChange(programId: string) {
-    this._programId.next(programId);
+    this._connectionService.setProgramId(programId);
   }
 }

@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { CreateSiteFormComponent } from './create-site-form.component';
+import {
+  CreateSiteFormComponent,
+  CreateSitePayload,
+} from './create-site-form.component';
 import { SiteApiService } from './site-api.service';
-import { Site } from './site.model';
 
 @Component({
   selector: 'safety-check-app-create-site-modal',
@@ -14,6 +16,7 @@ import { Site } from './site.model';
 
       <safety-check-app-create-site-form
         (createSite)="onCreateSite($event)"
+        [disabled]="isCreatingSite"
         (cancel)="closeDialog()"
       ></safety-check-app-create-site-form>
     </div>
@@ -25,9 +28,19 @@ export class CreateSiteModalComponent {
   private readonly _dialogRef = inject(MatDialogRef<CreateSiteModalComponent>);
   private readonly _siteApiService = inject(SiteApiService);
 
-  onCreateSite(site: Site): void {
-    this._siteApiService.createSite(site);
-    this._dialogRef.close();
+  isCreatingSite = false;
+
+  async onCreateSite(payload: CreateSitePayload) {
+    this.isCreatingSite = true;
+
+    try {
+      await this._siteApiService.createSite(payload);
+      this._dialogRef.close();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isCreatingSite = false;
+    }
   }
 
   closeDialog(): void {

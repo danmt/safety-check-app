@@ -12,7 +12,7 @@
         "outputPath": "dist/apps/web-client",
         "index": "apps/web-client/src/index.html",
         "main": "apps/web-client/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": ["zone.js", "apps/web-client/src/polyfills.ts"],
         "tsConfig": "apps/web-client/tsconfig.app.json",
         "assets": [
           "apps/web-client/src/favicon.ico",

@@ -1,29 +1,37 @@
-import { NgFor } from '@angular/common';
+import { AsyncPipe, NgFor } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
+import { tap } from 'rxjs';
 import { CreateSiteModalComponent } from './create-site-modal.component';
 import { SiteApiService } from './site-api.service';
-import { Site } from './site.model';
 
 @Component({
   selector: 'safety-check-app-site-list',
   template: `
     <section class="p-4">
-      <h2>Sites</h2>
+      <header class="mb-4">
+        <h2>Sites</h2>
 
-      <button mat-raised-button color="primary" (click)="openCreateSiteModal()">
-        New
-      </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="openCreateSiteModal()"
+        >
+          New
+        </button>
+
+        <button mat-raised-button (click)="onReloadSites()">Reload</button>
+      </header>
 
       <ul>
-        <li *ngFor="let site of sites" class="mb-4">
+        <li *ngFor="let site of sites$ | async" class="mb-4">
           <mat-card class="p-4">
-            <p>
-              {{ site.id }}
-            </p>
+            <p>ID: {{ site.id }}</p>
+            <p>Public Key: {{ site.publicKey.toBase58() }}</p>
+            <p>Authority: {{ site.authority.toBase58() }}</p>
             <p>
               <a
                 [routerLink]="['/sites', site.id]"
@@ -48,25 +56,25 @@ import { Site } from './site.model';
     </section>
   `,
   standalone: true,
-  imports: [NgFor, RouterLink, MatButtonModule, MatCardModule],
+  imports: [AsyncPipe, NgFor, RouterLink, MatButtonModule, MatCardModule],
 })
 export class SiteListComponent {
   private readonly _siteApiService = inject(SiteApiService);
   private readonly _dialog = inject(MatDialog);
 
-  sites: Site[] = this._siteApiService.getAllSites();
+  readonly sites$ = this._siteApiService.sites$.pipe(
+    tap((a) => console.log(a))
+  );
+
+  onReloadSites() {
+    this._siteApiService.reloadSites();
+  }
 
   deleteSite(id: string): void {
     this._siteApiService.deleteSite(id);
   }
 
   openCreateSiteModal() {
-    const dialogRef = this._dialog.open(CreateSiteModalComponent);
-
-    dialogRef.afterClosed().subscribe((newSite: Site) => {
-      if (newSite) {
-        this._siteApiService.createSite(newSite);
-      }
-    });
+    this._dialog.open(CreateSiteModalComponent);
   }
 }
