@@ -42,12 +42,12 @@ export type SafetyCheckManager = {
           isSigner: true;
         },
         {
-          name: 'inspector';
+          name: 'owner';
           isMut: true;
           isSigner: false;
         },
         {
-          name: 'owner';
+          name: 'inspector';
           isMut: true;
           isSigner: false;
         },
@@ -377,12 +377,12 @@ export const IDL: SafetyCheckManager = {
           isSigner: true,
         },
         {
-          name: 'inspector',
+          name: 'owner',
           isMut: true,
           isSigner: false,
         },
         {
-          name: 'owner',
+          name: 'inspector',
           isMut: true,
           isSigner: false,
         },

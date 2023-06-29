@@ -3,11 +3,9 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ConnectionService {
-  private readonly _rpcEndpoint = new BehaviorSubject(
-    'https://api.devnet.solana.com'
-  );
+  private readonly _rpcEndpoint = new BehaviorSubject('http://localhost:8899');
   private readonly _programId = new BehaviorSubject(
-    '71raUPCx3RPoAMCazRqpesaTRXGTQFZgsPQJNceKvKzJ'
+    '4WJv7r8mzjydzhYRdG3yCGEmZmQT1KQUyxFrT1keaBWC'
   );
 
   readonly rpcEndpoint$ = this._rpcEndpoint.asObservable();

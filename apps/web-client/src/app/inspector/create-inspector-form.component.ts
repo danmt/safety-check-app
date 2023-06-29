@@ -4,27 +4,27 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 
-export interface CreateDeviceModel {
-  id: string;
+export interface CreateInspectorModel {
+  owner: string;
 }
 
-export interface CreateDevicePayload {
-  id: string;
+export interface CreateInspectorPayload {
+  owner: string;
 }
 
 @Component({
-  selector: 'safety-check-app-create-device-form',
+  selector: 'safety-check-app-create-inspector-form',
   template: `
     <form
-      (ngSubmit)="onCreateDevice()"
-      #createDeviceForm="ngForm"
-      name="create-device-form"
+      (ngSubmit)="onCreateInspector()"
+      #createInspectorForm="ngForm"
+      name="create-inspector-form"
     >
       <mat-form-field class="w-full">
         <input
           matInput
           placeholder="Site ID"
-          name="create-device-form-site-id"
+          name="create-inspector-form-site-id"
           #siteIdControl="ngModel"
           [ngModel]="siteId"
           required
@@ -43,19 +43,19 @@ export interface CreateDevicePayload {
       <mat-form-field class="w-full">
         <input
           matInput
-          placeholder="Device ID"
-          name="create-device-form-device-id"
-          #deviceIdControl="ngModel"
-          [(ngModel)]="device.id"
+          placeholder="Inspector Owner"
+          name="create-inspector-form-inspector-owner"
+          #inspectorIdControl="ngModel"
+          [(ngModel)]="inspector.owner"
           required
           [disabled]="disabled"
         />
         <mat-error
           *ngIf="
-            deviceIdControl.invalid &&
-            (deviceIdControl.dirty || deviceIdControl.touched)
+            inspectorIdControl.invalid &&
+            (inspectorIdControl.dirty || inspectorIdControl.touched)
           "
-          >Device ID is required.</mat-error
+          >Inspector Owner is required.</mat-error
         >
       </mat-form-field>
 
@@ -72,7 +72,7 @@ export interface CreateDevicePayload {
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="createDeviceForm.invalid || disabled"
+          [disabled]="createInspectorForm.invalid || disabled"
         >
           Create
         </button>
@@ -82,16 +82,16 @@ export interface CreateDevicePayload {
   imports: [NgIf, FormsModule, MatInputModule, MatButtonModule],
   standalone: true,
 })
-export class CreateDeviceFormComponent {
+export class CreateInspectorFormComponent {
   @Input() siteId = '';
   @Input() disabled = false;
-  @Output() createDevice = new EventEmitter<CreateDevicePayload>();
+  @Output() createInspector = new EventEmitter<CreateInspectorPayload>();
   @Output() cancel = new EventEmitter<void>();
 
-  device: CreateDeviceModel = { id: '' };
+  inspector: CreateInspectorModel = { owner: '' };
 
-  onCreateDevice() {
-    this.createDevice.emit(this.device);
+  onCreateInspector() {
+    this.createInspector.emit(this.inspector);
   }
 
   onCancel() {

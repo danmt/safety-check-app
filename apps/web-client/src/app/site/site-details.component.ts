@@ -4,6 +4,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
 import { DeviceListComponent } from '../device';
+import { InspectorListComponent } from '../inspector';
 import { SiteApiService } from './site-api.service';
 
 @Component({
@@ -23,11 +24,21 @@ import { SiteApiService } from './site-api.service';
       <div>
         <safety-check-app-device-list></safety-check-app-device-list>
       </div>
+
+      <div>
+        <safety-check-app-inspector-list></safety-check-app-inspector-list>
+      </div>
     </section>
   `,
   styleUrls: [],
   standalone: true,
-  imports: [AsyncPipe, NgIf, MatCardModule, DeviceListComponent],
+  imports: [
+    AsyncPipe,
+    NgIf,
+    MatCardModule,
+    DeviceListComponent,
+    InspectorListComponent,
+  ],
 })
 export class SiteDetailsComponent {
   private readonly _route = inject(ActivatedRoute);

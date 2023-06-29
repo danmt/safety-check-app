@@ -46,7 +46,7 @@ export class CreateDeviceModalComponent {
       });
       this._dialogRef.close();
     } catch (error) {
-      console.error(error);
+      console.error({ error });
     } finally {
       this.isCreatingDevice = false;
     }

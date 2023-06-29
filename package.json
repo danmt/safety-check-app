@@ -29,6 +29,7 @@
     "@nrwl/angular": "15.2.4",
     "@solana/wallet-adapter-base": "^0.9.22",
     "@solana/wallet-adapter-phantom": "^0.9.19",
+    "@solana/wallet-adapter-solflare": "^0.6.21",
     "@solana/web3.js": "^1.73.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
