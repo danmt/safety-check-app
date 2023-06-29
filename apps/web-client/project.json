@@ -18,7 +18,10 @@
           "apps/web-client/src/favicon.ico",
           "apps/web-client/src/assets"
         ],
-        "styles": ["apps/web-client/src/styles.css"],
+        "styles": [
+          "apps/web-client/src/styles.css",
+          "@angular/material/prebuilt-themes/purple-green.css"
+        ],
         "scripts": []
       },
       "configurations": {
