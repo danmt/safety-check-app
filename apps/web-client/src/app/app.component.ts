@@ -1,6 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterOutlet } from '@angular/router';
 import { AnchorProvider, Program } from '@coral-xyz/anchor';
 import { ConnectionStore, WalletStore } from '@heavy-duty/wallet-adapter';
 import {
@@ -23,9 +24,7 @@ const SAFETY_CHECK_MANAGER_PROGRAM_ID = new PublicKey(
       <main class="grow">
         <h1>Safety Check App</h1>
 
-        <section>
-          <h2>Sites</h2>
-        </section>
+        <router-outlet></router-outlet>
       </main>
 
       <aside
@@ -85,6 +84,7 @@ const SAFETY_CHECK_MANAGER_PROGRAM_ID = new PublicKey(
   imports: [
     NgIf,
     AsyncPipe,
+    RouterOutlet,
     FormsModule,
     HdObscureAddressPipe,
     HdWalletMultiButtonComponent,
