@@ -1,4 +1,4 @@
-import { AsyncPipe, NgFor } from '@angular/common';
+import { AsyncPipe, NgClass, NgFor } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -11,23 +11,35 @@ import { SiteApiService } from './site-api.service';
   selector: 'safety-check-app-site-list',
   template: `
     <section class="p-4">
-      <header class="mb-4">
-        <h2>Sites</h2>
+      <mat-card class="p-4">
+        <header class="mb-4">
+          <h2
+            class="pl-4 py-2 bg-black bg-opacity-10 border-l-4 border-teal-400 text-xl mb-2"
+          >
+            Sites List
+          </h2>
 
-        <button
-          mat-raised-button
-          color="primary"
-          (click)="openCreateSiteModal()"
-        >
-          New
-        </button>
+          <div>
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="openCreateSiteModal()"
+            >
+              New
+            </button>
 
-        <button mat-raised-button (click)="onReloadSites()">Reload</button>
-      </header>
+            <button mat-raised-button (click)="onReloadSites()">Reload</button>
+          </div>
+        </header>
 
-      <ul>
-        <li *ngFor="let site of sites$ | async" class="mb-4">
-          <mat-card class="p-4">
+        <ul>
+          <li
+            *ngFor="let site of sites$ | async; let last = last"
+            class="mb-4 p-4 bg-black bg-opacity-10 border-l-4 border-green-500"
+            [ngClass]="{
+              'mb-4': !last
+            }"
+          >
             <p>ID: {{ site.id }}</p>
             <p>Public Key: {{ site.publicKey.toBase58() }}</p>
             <p>Authority: {{ site.authority.toBase58() }}</p>
@@ -39,13 +51,20 @@ import { SiteApiService } from './site-api.service';
                 view details
               </a>
             </p>
-          </mat-card>
-        </li>
-      </ul>
+          </li>
+        </ul>
+      </mat-card>
     </section>
   `,
   standalone: true,
-  imports: [AsyncPipe, NgFor, RouterLink, MatButtonModule, MatCardModule],
+  imports: [
+    AsyncPipe,
+    NgFor,
+    NgClass,
+    RouterLink,
+    MatButtonModule,
+    MatCardModule,
+  ],
 })
 export class SiteListComponent {
   private readonly _siteApiService = inject(SiteApiService);

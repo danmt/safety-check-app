@@ -93,16 +93,6 @@ export class InspectorApiService {
       program.programId
     );
 
-    /* 
-    
-    Buffer.from("inspector", "utf-8"),
-    Buffer.from(siteId, "utf-8"),
-    provider.wallet.publicKey.toBuffer(),
-    
-    */
-
-    console.log(params);
-
     const [inspectorPubkey] = PublicKey.findProgramAddressSync(
       [
         Buffer.from('inspector', 'utf-8'),

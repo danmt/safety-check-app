@@ -4,5 +4,7 @@ export interface Device {
   id: string;
   publicKey: PublicKey;
   siteId: string;
-  // Add other properties here
+  expiresAt: Date | null;
+  lastSafetyCheck: PublicKey | null;
+  inspector: PublicKey | null;
 }

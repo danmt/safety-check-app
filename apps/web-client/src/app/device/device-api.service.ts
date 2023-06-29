@@ -54,8 +54,12 @@ export class DeviceApiService {
       return deviceAccounts.map(({ account, publicKey }) => ({
         id: account.deviceId,
         siteId: account.siteId,
-        authority: account.authority,
-        publicKey: publicKey,
+        publicKey,
+        expiresAt: account.expiresAt
+          ? new Date(account.expiresAt.toNumber() * 1000)
+          : null,
+        lastSafetyCheck: account.lastSafetyCheck,
+        inspector: account.inspector,
       }));
     })
   );

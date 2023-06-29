@@ -17,6 +17,10 @@ import { ConnectionService } from '../core';
 import { IDL, SafetyCheckManager } from '../safety_check_manager';
 import { SafetyCheck } from './safety-check.model';
 
+const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
+  'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
+);
+
 export interface CreateSafetyCheckParams {
   siteId: string;
   deviceId: string;
@@ -54,16 +58,63 @@ export class SafetyCheckApiService {
         AnchorProvider.defaultOptions()
       );
       const program = new Program<SafetyCheckManager>(IDL, programId, provider);
-
       const safetyCheckAccounts = await program.account.safetyCheck.all();
 
-      return safetyCheckAccounts.map(({ account, publicKey }) => ({
-        id: account.safetyCheckId,
-        siteId: account.siteId,
-        deviceId: account.deviceId,
-        authority: account.authority,
-        publicKey: publicKey,
-      }));
+      return safetyCheckAccounts.map(({ account, publicKey }) => {
+        const [safetyCheckMintPubkey] = PublicKey.findProgramAddressSync(
+          [Buffer.from('safety_check_mint', 'utf-8'), publicKey.toBuffer()],
+          program.programId
+        );
+        const [safetyCheckMetadataPubkey] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('metadata', 'utf-8'),
+            TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+            safetyCheckMintPubkey.toBuffer(),
+          ],
+          TOKEN_METADATA_PROGRAM_ID
+        );
+        const [safetyCheckMasterEditionPubkey] =
+          PublicKey.findProgramAddressSync(
+            [
+              Buffer.from('metadata', 'utf-8'),
+              TOKEN_METADATA_PROGRAM_ID.toBuffer(),
+              safetyCheckMintPubkey.toBuffer(),
+              Buffer.from('edition', 'utf-8'),
+            ],
+            TOKEN_METADATA_PROGRAM_ID
+          );
+        const [devicePubkey] = PublicKey.findProgramAddressSync(
+          [
+            Buffer.from('device', 'utf-8'),
+            Buffer.from(account.siteId, 'utf-8'),
+            Buffer.from(account.deviceId, 'utf-8'),
+          ],
+          program.programId
+        );
+        const [deviceSafetyCheckVaultPubkey] = PublicKey.findProgramAddressSync(
+          [
+            devicePubkey.toBuffer(),
+            TOKEN_PROGRAM_ID.toBuffer(),
+            safetyCheckMintPubkey.toBuffer(),
+          ],
+          ASSOCIATED_TOKEN_PROGRAM_ID
+        );
+
+        return {
+          id: account.safetyCheckId,
+          siteId: account.siteId,
+          deviceId: account.deviceId,
+          inspector: account.inspector ?? PublicKey.default,
+          publicKey: publicKey,
+          expiresAt: new Date(account.expiresAt.toNumber() * 1000),
+          createdAt: new Date(account.createdAt.toNumber() * 1000),
+          durationInDays: account.durationInDays.toNumber(),
+          mint: safetyCheckMintPubkey,
+          metadata: safetyCheckMetadataPubkey,
+          masterEdition: safetyCheckMasterEditionPubkey,
+          vault: deviceSafetyCheckVaultPubkey,
+        };
+      });
     })
   );
 
@@ -123,9 +174,6 @@ export class SafetyCheckApiService {
         Buffer.from(params.safetyCheckId, 'utf-8'),
       ],
       program.programId
-    );
-    const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
-      'metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s'
     );
     const [safetyCheckMintPubkey] = PublicKey.findProgramAddressSync(
       [Buffer.from('safety_check_mint', 'utf-8'), safetyCheckPubkey.toBuffer()],

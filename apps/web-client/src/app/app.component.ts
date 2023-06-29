@@ -16,63 +16,69 @@ import { IDL, SafetyCheckManager } from './safety_check_manager';
 @Component({
   selector: 'safety-check-app-root',
   template: `
-    <div class="flex gap-4">
+    <div class="flex">
       <main class="grow">
-        <h1>Safety Check App</h1>
+        <header
+          class="bg-white bg-opacity-5 border-b border-gray-800 px-8 py-4"
+        >
+          <h1 class="text-2xl">Safety Check App</h1>
+        </header>
 
         <router-outlet></router-outlet>
       </main>
 
       <aside
-        class="w-96 border-l bg-white bg-opacity-5 border-gray-800 h-screen px-2 py-4"
+        class="w-96 border-l bg-white bg-opacity-5 border-gray-800 h-screen"
       >
-        <h2 class="text-xl mt-4 mb-8">Settings</h2>
+        <h2 class="text-2xl border-b border-gray-800 p-4">Settings</h2>
 
-        <div class="mb-4">
-          <label for="rpc-endpoint">RPC Endpoint: </label>
-          <input
-            id="rpc-endpoint"
-            type="text"
-            [ngModel]="rpcEndpoint$ | async"
-            (ngModelChange)="onRpcEndpointChange($event)"
-            name="rpc-endpoint"
-            class="bg-white bg-opacity-10 px-1 py-0.5 border border-gray-800 rounded"
-          />
+        <div class="p-4">
+          <div class="mb-4">
+            <label for="rpc-endpoint">RPC Endpoint: </label>
+            <input
+              id="rpc-endpoint"
+              type="text"
+              [ngModel]="rpcEndpoint$ | async"
+              (ngModelChange)="onRpcEndpointChange($event)"
+              name="rpc-endpoint"
+              class="bg-white bg-opacity-10 px-1 py-0.5 border border-gray-800 rounded"
+            />
+          </div>
+
+          <div class="mb-4">
+            <label for="program-id">Program ID: </label>
+            <input
+              id="program-id"
+              type="text"
+              [ngModel]="programId$ | async"
+              (ngModelChange)="onProgramIdChange($event)"
+              name="program-id"
+              class="bg-white bg-opacity-10 px-1 py-0.5 border border-gray-800 rounded"
+            />
+          </div>
+
+          <div
+            *hdWalletAdapter="
+              let wallet = wallet;
+              let connected = connected;
+              let publicKey = publicKey;
+              let wallets = wallets
+            "
+          >
+            <p>
+              Wallet:
+              {{ wallet ? wallet.adapter.name : 'None' }}
+            </p>
+
+            <p *ngIf="publicKey">
+              Public Key: {{ publicKey.toBase58() | hdObscureAddress }}
+            </p>
+
+            <p>Status: {{ connected ? 'connected' : 'disconnected' }}</p>
+          </div>
+
+          <hd-wallet-multi-button></hd-wallet-multi-button>
         </div>
-
-        <div class="mb-4">
-          <label for="program-id">Program ID: </label>
-          <input
-            id="program-id"
-            type="text"
-            [ngModel]="programId$ | async"
-            (ngModelChange)="onProgramIdChange($event)"
-            name="program-id"
-            class="bg-white bg-opacity-10 px-1 py-0.5 border border-gray-800 rounded"
-          />
-        </div>
-
-        <div
-          *hdWalletAdapter="
-            let wallet = wallet;
-            let connected = connected;
-            let publicKey = publicKey;
-            let wallets = wallets
-          "
-        >
-          <p>
-            Wallet:
-            {{ wallet ? wallet.adapter.name : 'None' }}
-          </p>
-
-          <p *ngIf="publicKey">
-            Public Key: {{ publicKey.toBase58() | hdObscureAddress }}
-          </p>
-
-          <p>Status: {{ connected ? 'connected' : 'disconnected' }}</p>
-        </div>
-
-        <hd-wallet-multi-button></hd-wallet-multi-button>
       </aside>
     </div>
   `,

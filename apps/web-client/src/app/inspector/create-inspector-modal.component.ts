@@ -39,7 +39,6 @@ export class CreateInspectorModalComponent {
   async onCreateInspector(payload: CreateInspectorPayload) {
     this.isCreatingInspector = true;
 
-    console.log(payload);
     try {
       await this._inspectorApiService.createInspector({
         siteId: this.siteId,

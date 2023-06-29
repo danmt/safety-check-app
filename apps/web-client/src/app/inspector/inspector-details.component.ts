@@ -8,16 +8,17 @@ import { InspectorApiService } from './inspector-api.service';
 @Component({
   selector: 'safety-check-app-inspector-details',
   template: `
-    <section class="flex flex-wrap gap-4 p-4">
-      <div class="basis-full">
-        <h2>Inspector Details</h2>
-
-        <mat-card class="p-4" *ngIf="inspector$ | async as inspector">
-          <p>Owner: {{ inspector.owner.toBase58() }}</p>
-          <p>Public Key: {{ inspector.publicKey.toBase58() }}</p>
-          <p>Site ID: {{ inspector.siteId }}</p>
-        </mat-card>
-      </div>
+    <section class="p-4">
+      <mat-card class="p-4" *ngIf="inspector$ | async as inspector">
+        <h2
+          class="pl-4 py-2 bg-black bg-opacity-10 border-l-4 border-teal-400 text-xl mb-2"
+        >
+          Inspector Details
+        </h2>
+        <p>Owner: {{ inspector.owner.toBase58() }}</p>
+        <p>Public Key: {{ inspector.publicKey.toBase58() }}</p>
+        <p>Site ID: {{ inspector.siteId }}</p>
+      </mat-card>
     </section>
   `,
   styleUrls: [],
@@ -33,8 +34,9 @@ export class InspectorDetailsComponent {
       (inspectors) =>
         inspectors.find(
           (inspector) =>
+            inspector.siteId === this._route.snapshot.paramMap.get('siteId') &&
             inspector.owner.toBase58() ===
-            this._route.snapshot.paramMap.get('owner')
+              this._route.snapshot.paramMap.get('owner')
         ) ?? null
     )
   );

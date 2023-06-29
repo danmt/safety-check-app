@@ -272,6 +272,12 @@ export type SafetyCheckManager = {
             };
           },
           {
+            name: 'inspector';
+            type: {
+              option: 'publicKey';
+            };
+          },
+          {
             name: 'bump';
             type: 'u8';
           }
@@ -602,6 +608,12 @@ export const IDL: SafetyCheckManager = {
           },
           {
             name: 'lastSafetyCheck',
+            type: {
+              option: 'publicKey',
+            },
+          },
+          {
+            name: 'inspector',
             type: {
               option: 'publicKey',
             },
