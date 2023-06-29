@@ -8,6 +8,8 @@ import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 import { AppComponent } from './app/app.component';
 import { DeviceDetailsComponent } from './app/device';
+import { InspectorDetailsComponent } from './app/inspector';
+import { SafetyCheckDetailsComponent } from './app/safety-check';
 import { SiteDetailsComponent, SiteListComponent } from './app/site';
 
 bootstrapApplication(AppComponent, {
@@ -21,6 +23,14 @@ bootstrapApplication(AppComponent, {
         {
           path: 'sites/:siteId/devices/:deviceId',
           component: DeviceDetailsComponent,
+        },
+        {
+          path: 'sites/:siteId/devices/:deviceId/safety-checks/:safetyCheckId',
+          component: SafetyCheckDetailsComponent,
+        },
+        {
+          path: 'sites/:siteId/inspectors/:owner',
+          component: InspectorDetailsComponent,
         },
         {
           path: '**',
