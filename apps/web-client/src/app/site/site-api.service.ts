@@ -4,6 +4,7 @@ import { ConnectionStore, WalletStore } from '@heavy-duty/wallet-adapter';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import {
   BehaviorSubject,
+  Observable,
   combineLatest,
   concatMap,
   firstValueFrom,
@@ -24,9 +25,8 @@ export class SiteApiService {
   private readonly _walletStore = inject(WalletStore);
   private readonly _connectionService = inject(ConnectionService);
   private readonly _reload = new BehaviorSubject(false);
-  private sites: Site[] = []; // Assuming you have an array to store sites
 
-  readonly sites$ = combineLatest([
+  readonly sites$: Observable<Site[]> = combineLatest([
     this._connectionStore.connection$,
     this._walletStore.anchorWallet$,
     this._connectionService.programId$,
@@ -48,22 +48,18 @@ export class SiteApiService {
       );
       const program = new Program<SafetyCheckManager>(IDL, programId, provider);
 
-      const sites = await program.account.site.all();
+      const siteAccounts = await program.account.site.all();
 
-      return sites.map((site) => ({
-        id: '',
-        authority: site.account.authority,
-        publicKey: site.publicKey,
+      return siteAccounts.map(({ account, publicKey }) => ({
+        id: account.siteId,
+        authority: account.authority,
+        publicKey: publicKey,
       }));
     })
   );
 
   reloadSites() {
     this._reload.next(true);
-  }
-
-  getSiteById(id: string): Site | undefined {
-    return this.sites.find((site) => site.id === id);
   }
 
   async createSite(params: CreateSiteParams) {
@@ -105,19 +101,5 @@ export class SiteApiService {
       .rpc();
 
     console.log('success');
-  }
-
-  updateSite(site: Site): void {
-    const index = this.sites.findIndex((s) => s.id === site.id);
-    if (index !== -1) {
-      this.sites[index] = site;
-    }
-  }
-
-  deleteSite(id: string): void {
-    const index = this.sites.findIndex((site) => site.id === id);
-    if (index !== -1) {
-      this.sites.splice(index, 1);
-    }
   }
 }

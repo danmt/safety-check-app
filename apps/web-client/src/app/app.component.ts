@@ -9,7 +9,7 @@ import {
   HdWalletAdapterDirective,
 } from '@heavy-duty/wallet-adapter-cdk';
 import { HdWalletMultiButtonComponent } from '@heavy-duty/wallet-adapter-material';
-import { combineLatest, filter, firstValueFrom, map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { ConnectionService } from './core';
 import { IDL, SafetyCheckManager } from './safety_check_manager';
 
@@ -122,13 +122,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this._connectionStore.setEndpoint(this.rpcEndpoint$);
-
-    firstValueFrom(
-      this.program$.pipe(filter((program) => program !== null))
-    ).then((a) => {
-      console.log(a);
-      a?.account.site.all().then((a) => console.log(a));
-    });
   }
 
   onRpcEndpointChange(rpcEndpoint: string) {

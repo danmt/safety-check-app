@@ -1,8 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { CreateDeviceFormComponent } from './create-device-form.component';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  CreateDeviceFormComponent,
+  CreateDevicePayload,
+} from './create-device-form.component';
 import { DeviceApiService } from './device-api.service';
-import { Device } from './device.model';
 
 @Component({
   selector: 'safety-check-app-create-device-modal',
@@ -13,6 +15,8 @@ import { Device } from './device.model';
       </header>
 
       <safety-check-app-create-device-form
+        [siteId]="siteId"
+        [disabled]="isCreatingDevice"
         (createDevice)="onCreateDevice($event)"
         (cancel)="closeDialog()"
       ></safety-check-app-create-device-form>
@@ -25,11 +29,27 @@ export class CreateDeviceModalComponent {
   private readonly _dialogRef = inject(
     MatDialogRef<CreateDeviceModalComponent>
   );
+  private readonly _dialogData = inject(MAT_DIALOG_DATA);
   private readonly _deviceApiService = inject(DeviceApiService);
 
-  onCreateDevice(device: Device): void {
-    this._deviceApiService.createDevice(device);
-    this._dialogRef.close();
+  readonly siteId = this._dialogData.siteId;
+
+  isCreatingDevice = false;
+
+  async onCreateDevice(payload: CreateDevicePayload) {
+    this.isCreatingDevice = true;
+
+    try {
+      await this._deviceApiService.createDevice({
+        siteId: this.siteId,
+        deviceId: payload.id,
+      });
+      this._dialogRef.close();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.isCreatingDevice = false;
+    }
   }
 
   closeDialog(): void {

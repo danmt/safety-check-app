@@ -1,38 +1,44 @@
-import { NgIf } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
 import { DeviceListComponent } from '../device';
 import { SiteApiService } from './site-api.service';
-import { Site } from './site.model';
 
 @Component({
   selector: 'safety-check-app-site-details',
   template: `
-    <h2>Site Details</h2>
+    <section class="flex flex-wrap gap-4 p-4">
+      <div class="basis-full">
+        <h2>Site Details</h2>
 
-    <div *ngIf="site">
-      <p>ID: {{ site.id }}</p>
-      <!-- Display other site properties -->
-    </div>
+        <mat-card class="p-4" *ngIf="site$ | async as site">
+          <p>ID: {{ site.id }}</p>
+          <p>Public Key: {{ site.publicKey.toBase58() }}</p>
+          <p>Authority: {{ site.authority.toBase58() }}</p>
+        </mat-card>
+      </div>
 
-    <div>
-      <safety-check-app-device-list></safety-check-app-device-list>
-    </div>
+      <div>
+        <safety-check-app-device-list></safety-check-app-device-list>
+      </div>
+    </section>
   `,
   styleUrls: [],
   standalone: true,
-  imports: [NgIf, DeviceListComponent],
+  imports: [AsyncPipe, NgIf, MatCardModule, DeviceListComponent],
 })
-export class SiteDetailsComponent implements OnInit {
+export class SiteDetailsComponent {
   private readonly _route = inject(ActivatedRoute);
   private readonly _siteApiService = inject(SiteApiService);
 
-  site: Site | null = null;
-
-  ngOnInit(): void {
-    const siteId = this._route.snapshot.paramMap.get('siteId');
-    if (siteId) {
-      this.site = this._siteApiService.getSiteById(siteId) ?? null;
-    }
-  }
+  readonly site$ = this._siteApiService.sites$.pipe(
+    map(
+      (sites) =>
+        sites.find(
+          (site) => site.id === this._route.snapshot.paramMap.get('siteId')
+        ) ?? null
+    )
+  );
 }

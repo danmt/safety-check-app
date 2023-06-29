@@ -31,7 +31,14 @@ export interface CreateSitePayload {
         >
       </mat-form-field>
       <div class="flex justify-end">
-        <button mat-button type="button" (click)="onCancel()">Cancel</button>
+        <button
+          mat-button
+          type="button"
+          (click)="onCancel()"
+          [disabled]="disabled"
+        >
+          Cancel
+        </button>
         <button
           mat-raised-button
           color="primary"

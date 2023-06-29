@@ -7,7 +7,7 @@ export class ConnectionService {
     'https://api.devnet.solana.com'
   );
   private readonly _programId = new BehaviorSubject(
-    '3WdiprEYJGr2Av3BocnFpohHKq6kw6vWLAHtk5Byiizg'
+    '71raUPCx3RPoAMCazRqpesaTRXGTQFZgsPQJNceKvKzJ'
   );
 
   readonly rpcEndpoint$ = this._rpcEndpoint.asObservable();

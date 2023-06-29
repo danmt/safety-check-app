@@ -4,7 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
-import { tap } from 'rxjs';
 import { CreateSiteModalComponent } from './create-site-modal.component';
 import { SiteApiService } from './site-api.service';
 
@@ -40,16 +39,6 @@ import { SiteApiService } from './site-api.service';
                 view details
               </a>
             </p>
-
-            <div>
-              <button
-                (click)="deleteSite(site.id)"
-                mat-raised-button
-                color="warn"
-              >
-                Delete
-              </button>
-            </div>
           </mat-card>
         </li>
       </ul>
@@ -62,16 +51,10 @@ export class SiteListComponent {
   private readonly _siteApiService = inject(SiteApiService);
   private readonly _dialog = inject(MatDialog);
 
-  readonly sites$ = this._siteApiService.sites$.pipe(
-    tap((a) => console.log(a))
-  );
+  readonly sites$ = this._siteApiService.sites$;
 
   onReloadSites() {
     this._siteApiService.reloadSites();
-  }
-
-  deleteSite(id: string): void {
-    this._siteApiService.deleteSite(id);
   }
 
   openCreateSiteModal() {

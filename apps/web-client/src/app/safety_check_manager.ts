@@ -47,6 +47,11 @@ export type SafetyCheckManager = {
           isSigner: false;
         },
         {
+          name: 'owner';
+          isMut: true;
+          isSigner: false;
+        },
+        {
           name: 'systemProgram';
           isMut: false;
           isSigner: false;
@@ -211,6 +216,10 @@ export type SafetyCheckManager = {
             type: 'publicKey';
           },
           {
+            name: 'siteId';
+            type: 'string';
+          },
+          {
             name: 'bump';
             type: 'u8';
           }
@@ -223,6 +232,14 @@ export type SafetyCheckManager = {
         kind: 'struct';
         fields: [
           {
+            name: 'owner';
+            type: 'publicKey';
+          },
+          {
+            name: 'siteId';
+            type: 'string';
+          },
+          {
             name: 'bump';
             type: 'u8';
           }
@@ -234,6 +251,14 @@ export type SafetyCheckManager = {
       type: {
         kind: 'struct';
         fields: [
+          {
+            name: 'siteId';
+            type: 'string';
+          },
+          {
+            name: 'deviceId';
+            type: 'string';
+          },
           {
             name: 'expiresAt';
             type: {
@@ -258,6 +283,18 @@ export type SafetyCheckManager = {
       type: {
         kind: 'struct';
         fields: [
+          {
+            name: 'siteId';
+            type: 'string';
+          },
+          {
+            name: 'deviceId';
+            type: 'string';
+          },
+          {
+            name: 'safetyCheckId';
+            type: 'string';
+          },
           {
             name: 'inspector';
             type: 'publicKey';
@@ -341,6 +378,11 @@ export const IDL: SafetyCheckManager = {
         },
         {
           name: 'inspector',
+          isMut: true,
+          isSigner: false,
+        },
+        {
+          name: 'owner',
           isMut: true,
           isSigner: false,
         },
@@ -509,6 +551,10 @@ export const IDL: SafetyCheckManager = {
             type: 'publicKey',
           },
           {
+            name: 'siteId',
+            type: 'string',
+          },
+          {
             name: 'bump',
             type: 'u8',
           },
@@ -521,6 +567,14 @@ export const IDL: SafetyCheckManager = {
         kind: 'struct',
         fields: [
           {
+            name: 'owner',
+            type: 'publicKey',
+          },
+          {
+            name: 'siteId',
+            type: 'string',
+          },
+          {
             name: 'bump',
             type: 'u8',
           },
@@ -532,6 +586,14 @@ export const IDL: SafetyCheckManager = {
       type: {
         kind: 'struct',
         fields: [
+          {
+            name: 'siteId',
+            type: 'string',
+          },
+          {
+            name: 'deviceId',
+            type: 'string',
+          },
           {
             name: 'expiresAt',
             type: {
@@ -556,6 +618,18 @@ export const IDL: SafetyCheckManager = {
       type: {
         kind: 'struct',
         fields: [
+          {
+            name: 'siteId',
+            type: 'string',
+          },
+          {
+            name: 'deviceId',
+            type: 'string',
+          },
+          {
+            name: 'safetyCheckId',
+            type: 'string',
+          },
           {
             name: 'inspector',
             type: 'publicKey',

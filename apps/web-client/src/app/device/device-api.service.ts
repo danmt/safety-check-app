@@ -1,35 +1,116 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { AnchorProvider, Program } from '@coral-xyz/anchor';
+import { ConnectionStore, WalletStore } from '@heavy-duty/wallet-adapter';
+import { PublicKey, SystemProgram } from '@solana/web3.js';
+import {
+  BehaviorSubject,
+  Observable,
+  combineLatest,
+  concatMap,
+  firstValueFrom,
+} from 'rxjs';
+import { ConnectionService } from '../core';
+import { IDL, SafetyCheckManager } from '../safety_check_manager';
 import { Device } from './device.model';
+
+export interface CreateDeviceParams {
+  siteId: string;
+  deviceId: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class DeviceApiService {
-  private devices: Device[] = []; // Assuming you have an array to store devices
+  private readonly _connectionStore = inject(ConnectionStore);
+  private readonly _walletStore = inject(WalletStore);
+  private readonly _connectionService = inject(ConnectionService);
+  private readonly _reload = new BehaviorSubject(false);
 
-  getAllDevices(): Device[] {
-    return this.devices;
+  readonly devices$: Observable<Device[]> = combineLatest([
+    this._connectionStore.connection$,
+    this._walletStore.anchorWallet$,
+    this._connectionService.programId$,
+    this._reload,
+  ]).pipe(
+    concatMap(async ([connection, anchorWallet, programId]) => {
+      if (
+        connection === null ||
+        anchorWallet === undefined ||
+        programId === null
+      ) {
+        return [];
+      }
+
+      const provider = new AnchorProvider(
+        connection,
+        anchorWallet,
+        AnchorProvider.defaultOptions()
+      );
+      const program = new Program<SafetyCheckManager>(IDL, programId, provider);
+
+      const deviceAccounts = await program.account.device.all();
+
+      return deviceAccounts.map(({ account, publicKey }) => ({
+        id: account.deviceId,
+        siteId: account.siteId,
+        authority: account.authority,
+        publicKey: publicKey,
+      }));
+    })
+  );
+
+  reloadDevices() {
+    this._reload.next(true);
   }
 
-  getDeviceById(id: string): Device | undefined {
-    return this.devices.find((device) => device.id === id);
-  }
+  async createDevice(params: CreateDeviceParams) {
+    const [connection, anchorWallet, programId] = await firstValueFrom(
+      combineLatest([
+        this._connectionStore.connection$,
+        this._walletStore.anchorWallet$,
+        this._connectionService.programId$,
+      ])
+    );
 
-  createDevice(device: Device): void {
-    this.devices.push(device);
-  }
-
-  updateDevice(device: Device): void {
-    const index = this.devices.findIndex((s) => s.id === device.id);
-    if (index !== -1) {
-      this.devices[index] = device;
+    if (
+      connection === null ||
+      anchorWallet === undefined ||
+      programId === null
+    ) {
+      throw new Error('connection, anchorWallet, or programId is null');
     }
-  }
 
-  deleteDevice(id: string): void {
-    const index = this.devices.findIndex((device) => device.id === id);
-    if (index !== -1) {
-      this.devices.splice(index, 1);
-    }
+    const provider = new AnchorProvider(
+      connection,
+      anchorWallet,
+      AnchorProvider.defaultOptions()
+    );
+    const program = new Program<SafetyCheckManager>(IDL, programId, provider);
+
+    const [sitePubkey] = PublicKey.findProgramAddressSync(
+      [Buffer.from('site', 'utf-8'), Buffer.from(params.siteId, 'utf-8')],
+      program.programId
+    );
+    const [devicePubkey] = PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('device', 'utf-8'),
+        Buffer.from(params.siteId, 'utf-8'),
+        Buffer.from(params.deviceId, 'utf-8'),
+      ],
+      program.programId
+    );
+
+    await program.methods
+      .createDevice(params.siteId, params.deviceId)
+      .accounts({
+        authority: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+        site: sitePubkey,
+        device: devicePubkey,
+      })
+      .rpc();
+
+    console.log('success');
   }
 }
