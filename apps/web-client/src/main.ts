@@ -10,7 +10,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(BrowserAnimationsModule, DialogModule),
     provideWalletAdapter({
-      autoConnect: false,
+      autoConnect: true,
       adapters: [new PhantomWalletAdapter()],
     }),
   ],
