@@ -34,12 +34,7 @@ export interface CheckDevicePayload {
           required
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            siteIdControl.invalid &&
-            (siteIdControl.dirty || siteIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="siteIdControl.invalid && submitted">
           Site ID is required.
         </mat-error>
       </mat-form-field>
@@ -55,12 +50,7 @@ export interface CheckDevicePayload {
           required
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            deviceIdControl.invalid &&
-            (deviceIdControl.dirty || deviceIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="deviceIdControl.invalid && submitted">
           Device ID is required.
         </mat-error>
       </mat-form-field>
@@ -91,14 +81,16 @@ export interface CheckDevicePayload {
 export class CheckDeviceFormComponent {
   private readonly _snackBar = inject(MatSnackBar);
 
-  @Input() siteId = '';
   @Input() disabled = false;
   @Output() checkDevice = new EventEmitter<CheckDevicePayload>();
   @Output() cancel = new EventEmitter<void>();
 
+  submitted = false;
   model: CheckDeviceModel = { siteId: '', deviceId: '' };
 
   onCheckDevice(form: NgForm) {
+    this.submitted = true;
+
     if (form.invalid) {
       this._snackBar.open('⚠️ Invalid form!', undefined, {
         duration: 3000,

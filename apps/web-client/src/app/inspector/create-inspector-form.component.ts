@@ -33,12 +33,7 @@ export interface CreateInspectorPayload {
           readonly
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            siteIdControl.invalid &&
-            (siteIdControl.dirty || siteIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="siteIdControl.invalid && submitted">
           Site ID is required.
         </mat-error>
       </mat-form-field>
@@ -54,12 +49,7 @@ export interface CreateInspectorPayload {
           required
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            inspectorIdControl.invalid &&
-            (inspectorIdControl.dirty || inspectorIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="inspectorIdControl.invalid && submitted">
           Inspector Owner is required.
         </mat-error>
       </mat-form-field>
@@ -95,9 +85,12 @@ export class CreateInspectorFormComponent {
   @Output() createInspector = new EventEmitter<CreateInspectorPayload>();
   @Output() cancel = new EventEmitter<void>();
 
+  submitted = false;
   model: CreateInspectorModel = { owner: '' };
 
   onCreateInspector(form: NgForm) {
+    this.submitted = true;
+
     if (form.invalid) {
       this._snackBar.open('⚠️ Invalid form!', undefined, {
         duration: 3000,

@@ -35,12 +35,7 @@ export interface CreateSafetyCheckPayload {
           readonly
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            siteIdControl.invalid &&
-            (siteIdControl.dirty || siteIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="siteIdControl.invalid && submitted">
           Site ID is required.
         </mat-error>
       </mat-form-field>
@@ -57,12 +52,7 @@ export interface CreateSafetyCheckPayload {
           readonly
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            deviceIdControl.invalid &&
-            (deviceIdControl.dirty || deviceIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="deviceIdControl.invalid && submitted">
           Device ID is required.
         </mat-error>
       </mat-form-field>
@@ -78,12 +68,7 @@ export interface CreateSafetyCheckPayload {
           required
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            safetyCheckIdControl.invalid &&
-            (safetyCheckIdControl.dirty || safetyCheckIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="safetyCheckIdControl.invalid && submitted">
           Safety Check ID is required.
         </mat-error>
       </mat-form-field>
@@ -99,12 +84,7 @@ export interface CreateSafetyCheckPayload {
           required
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            durationInDaysControl.invalid &&
-            (durationInDaysControl.dirty || durationInDaysControl.touched)
-          "
-        >
+        <mat-error *ngIf="durationInDaysControl.invalid && submitted">
           Duration is required.
         </mat-error>
       </mat-form-field>
@@ -141,9 +121,12 @@ export class CreateSafetyCheckFormComponent {
   @Output() createSafetyCheck = new EventEmitter<CreateSafetyCheckPayload>();
   @Output() cancel = new EventEmitter<void>();
 
+  submitted = false;
   model: CreateSafetyCheckModel = { id: '', durationInDays: null };
 
   onCreateSafetyCheck(form: NgForm) {
+    this.submitted = true;
+
     if (form.invalid || this.model.durationInDays === null) {
       this._snackBar.open('⚠️ Invalid form!', undefined, {
         duration: 3000,

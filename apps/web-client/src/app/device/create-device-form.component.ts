@@ -33,12 +33,7 @@ export interface CreateDevicePayload {
           readonly
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            siteIdControl.invalid &&
-            (siteIdControl.dirty || siteIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="siteIdControl.invalid && submitted">
           Site ID is required.
         </mat-error>
       </mat-form-field>
@@ -54,12 +49,7 @@ export interface CreateDevicePayload {
           required
           [disabled]="disabled"
         />
-        <mat-error
-          *ngIf="
-            deviceIdControl.invalid &&
-            (deviceIdControl.dirty || deviceIdControl.touched)
-          "
-        >
+        <mat-error *ngIf="deviceIdControl.invalid && submitted">
           Device ID is required.
         </mat-error>
       </mat-form-field>
@@ -77,7 +67,7 @@ export interface CreateDevicePayload {
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="createDeviceForm.invalid || disabled"
+          [disabled]="disabled"
         >
           Create
         </button>
@@ -95,9 +85,12 @@ export class CreateDeviceFormComponent {
   @Output() createDevice = new EventEmitter<CreateDevicePayload>();
   @Output() cancel = new EventEmitter<void>();
 
+  submitted = false;
   model: CreateDeviceModel = { id: '' };
 
   onCreateDevice(form: NgForm) {
+    this.submitted = true;
+
     if (form.invalid) {
       this._snackBar.open('⚠️ Invalid form!', undefined, {
         duration: 3000,

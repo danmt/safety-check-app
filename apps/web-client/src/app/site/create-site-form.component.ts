@@ -28,7 +28,7 @@ export interface CreateSitePayload {
           required
           [disabled]="disabled"
         />
-        <mat-error *ngIf="siteId.invalid && (siteId.dirty || siteId.touched)">
+        <mat-error *ngIf="siteId.invalid && submitted">
           Site ID is required.
         </mat-error>
       </mat-form-field>
@@ -63,9 +63,12 @@ export class CreateSiteFormComponent {
   @Output() createSite = new EventEmitter<CreateSitePayload>();
   @Output() cancel = new EventEmitter<void>();
 
+  submitted = false;
   model: CreateSiteModel = { id: '' };
 
   onCreateSite(form: NgForm) {
+    this.submitted = true;
+
     if (form.invalid) {
       this._snackBar.open('⚠️ Invalid form!', undefined, {
         duration: 3000,
