@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreateDeviceFormComponent,
   CreateDevicePayload,
@@ -31,6 +32,7 @@ export class CreateDeviceModalComponent {
   );
   private readonly _dialogData = inject(MAT_DIALOG_DATA);
   private readonly _deviceApiService = inject(DeviceApiService);
+  private readonly _snackBar = inject(MatSnackBar);
 
   readonly siteId = this._dialogData.siteId;
 
@@ -44,8 +46,14 @@ export class CreateDeviceModalComponent {
         siteId: this.siteId,
         deviceId: payload.id,
       });
+      this._snackBar.open('🎉 Device successfully created!', undefined, {
+        duration: 3000,
+      });
       this._dialogRef.close();
     } catch (error) {
+      this._snackBar.open('🚨 Failed to create device!', undefined, {
+        duration: 3000,
+      });
       console.error({ error });
     } finally {
       this.isCreatingDevice = false;

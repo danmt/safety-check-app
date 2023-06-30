@@ -1,5 +1,6 @@
-import { DialogModule } from '@angular/cdk/dialog';
 import { importProvidersFrom } from '@angular/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
@@ -16,7 +17,8 @@ bootstrapApplication(AppComponent, {
   providers: [
     importProvidersFrom(
       BrowserAnimationsModule,
-      DialogModule,
+      MatDialogModule,
+      MatSnackBarModule,
       RouterModule.forRoot([
         { path: 'sites', component: SiteListComponent },
         { path: 'sites/:siteId', component: SiteDetailsComponent },

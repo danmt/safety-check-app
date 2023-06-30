@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreateSiteFormComponent,
   CreateSitePayload,
@@ -27,6 +28,7 @@ import { SiteApiService } from './site-api.service';
 export class CreateSiteModalComponent {
   private readonly _dialogRef = inject(MatDialogRef<CreateSiteModalComponent>);
   private readonly _siteApiService = inject(SiteApiService);
+  private readonly _snackBar = inject(MatSnackBar);
 
   isCreatingSite = false;
 
@@ -35,8 +37,14 @@ export class CreateSiteModalComponent {
 
     try {
       await this._siteApiService.createSite(payload);
+      this._snackBar.open('🎉 Site successfully created!', undefined, {
+        duration: 3000,
+      });
       this._dialogRef.close();
     } catch (error) {
+      this._snackBar.open('🚨 Failed to create site!', undefined, {
+        duration: 3000,
+      });
       console.error(error);
     } finally {
       this.isCreatingSite = false;

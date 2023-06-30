@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreateInspectorFormComponent,
   CreateInspectorPayload,
@@ -31,6 +32,7 @@ export class CreateInspectorModalComponent {
   );
   private readonly _dialogData = inject(MAT_DIALOG_DATA);
   private readonly _inspectorApiService = inject(InspectorApiService);
+  private readonly _snackBar = inject(MatSnackBar);
 
   readonly siteId = this._dialogData.siteId;
 
@@ -44,8 +46,14 @@ export class CreateInspectorModalComponent {
         siteId: this.siteId,
         owner: payload.owner,
       });
+      this._snackBar.open('🎉 Inspector successfully created!', undefined, {
+        duration: 3000,
+      });
       this._dialogRef.close();
     } catch (error) {
+      this._snackBar.open('🚨 Failed to create inspector!', undefined, {
+        duration: 3000,
+      });
       console.error(error);
     } finally {
       this.isCreatingInspector = false;

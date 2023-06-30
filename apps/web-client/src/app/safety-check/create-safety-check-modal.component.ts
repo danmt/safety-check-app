@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   CreateSafetyCheckFormComponent,
   CreateSafetyCheckPayload,
@@ -32,6 +33,7 @@ export class CreateSafetyCheckModalComponent {
   );
   private readonly _dialogData = inject(MAT_DIALOG_DATA);
   private readonly _safetyCheckApiService = inject(SafetyCheckApiService);
+  private readonly _snackBar = inject(MatSnackBar);
 
   readonly siteId = this._dialogData.siteId;
   readonly deviceId = this._dialogData.deviceId;
@@ -48,8 +50,14 @@ export class CreateSafetyCheckModalComponent {
         durationInDays: payload.durationInDays,
         safetyCheckId: payload.id,
       });
+      this._snackBar.open('🎉 Safety check successfully created!', undefined, {
+        duration: 3000,
+      });
       this._dialogRef.close();
     } catch (error) {
+      this._snackBar.open('🚨 Failed to create safety check!', undefined, {
+        duration: 3000,
+      });
       console.error({ error });
     } finally {
       this.isCreatingSafetyCheck = false;
