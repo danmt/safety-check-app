@@ -1,13 +1,13 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AnchorProvider, Program } from '@coral-xyz/anchor';
 import { ConnectionStore, WalletStore } from '@heavy-duty/wallet-adapter';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import {
   BehaviorSubject,
-  Observable,
   combineLatest,
   concatMap,
   firstValueFrom,
+  Observable,
 } from 'rxjs';
 import { ConnectionService } from '../core';
 import { IDL, SafetyCheckManager } from '../safety_check_manager';
@@ -112,7 +112,5 @@ export class InspectorApiService {
         owner: new PublicKey(params.owner),
       })
       .rpc();
-
-    console.log('success');
   }
 }

@@ -45,7 +45,7 @@ export class CreateSiteModalComponent {
       this._snackBar.open('🚨 Failed to create site!', undefined, {
         duration: 3000,
       });
-      console.error(error);
+      console.error({ error });
     } finally {
       this.isCreatingSite = false;
     }

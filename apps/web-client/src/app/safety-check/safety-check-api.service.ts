@@ -1,17 +1,17 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
 import { ConnectionStore, WalletStore } from '@heavy-duty/wallet-adapter';
 import {
   ASSOCIATED_TOKEN_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
 } from '@solana/spl-token';
-import { PublicKey, SYSVAR_RENT_PUBKEY, SystemProgram } from '@solana/web3.js';
+import { PublicKey, SystemProgram, SYSVAR_RENT_PUBKEY } from '@solana/web3.js';
 import {
   BehaviorSubject,
-  Observable,
   combineLatest,
   concatMap,
   firstValueFrom,
+  Observable,
 } from 'rxjs';
 import { ConnectionService } from '../core';
 import { IDL, SafetyCheckManager } from '../safety_check_manager';
@@ -232,7 +232,5 @@ export class SafetyCheckApiService {
         safetyCheckMasterEdition: safetyCheckMasterEditionPubkey,
       })
       .rpc();
-
-    console.log('success');
   }
 }

@@ -54,7 +54,7 @@ export class CreateInspectorModalComponent {
       this._snackBar.open('🚨 Failed to create inspector!', undefined, {
         duration: 3000,
       });
-      console.error(error);
+      console.error({ error });
     } finally {
       this.isCreatingInspector = false;
     }
