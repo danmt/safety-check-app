@@ -1,6 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 import { ConnectionStore } from '@heavy-duty/wallet-adapter';
 import {
   HdObscureAddressPipe,
@@ -16,29 +17,37 @@ import { ConnectionService } from './connection.service';
       <h2 class="text-2xl border-b border-gray-800 p-4">Settings</h2>
 
       <div class="p-4">
-        <div class="mb-4">
-          <label for="rpc-endpoint">RPC Endpoint: </label>
+        <mat-form-field class="w-full">
+          <mat-label> RPC Endpoint </mat-label>
           <input
-            id="rpc-endpoint"
-            type="text"
+            matInput
+            placeholder="RPC Endpoint"
+            name="rpc-endpoint"
+            #rpcEndpointControl="ngModel"
             [ngModel]="rpcEndpoint$ | async"
             (ngModelChange)="onRpcEndpointChange($event)"
-            name="rpc-endpoint"
-            class="bg-white bg-opacity-10 px-1 py-0.5 border border-gray-800 rounded"
+            required
           />
-        </div>
+          <mat-error *ngIf="rpcEndpointControl.invalid">
+            RPC Endpoint is required.
+          </mat-error>
+        </mat-form-field>
 
-        <div class="mb-4">
-          <label for="program-id">Program ID: </label>
+        <mat-form-field class="w-full">
+          <mat-label> Program ID </mat-label>
           <input
-            id="program-id"
-            type="text"
+            matInput
+            placeholder="Program ID"
+            name="program-id"
+            #programIdControl="ngModel"
             [ngModel]="programId$ | async"
             (ngModelChange)="onProgramIdChange($event)"
-            name="program-id"
-            class="bg-white bg-opacity-10 px-1 py-0.5 border border-gray-800 rounded"
+            required
           />
-        </div>
+          <mat-error *ngIf="programIdControl.invalid">
+            Program ID is required.
+          </mat-error>
+        </mat-form-field>
 
         <div
           *hdWalletAdapter="
@@ -69,6 +78,7 @@ import { ConnectionService } from './connection.service';
     NgIf,
     AsyncPipe,
     FormsModule,
+    MatInputModule,
     HdObscureAddressPipe,
     HdWalletMultiButtonComponent,
     HdWalletAdapterDirective,
