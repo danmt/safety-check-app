@@ -1,8 +1,9 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface CreateInspectorModel {
   owner: string;
@@ -16,11 +17,12 @@ export interface CreateInspectorPayload {
   selector: 'safety-check-app-create-inspector-form',
   template: `
     <form
-      (ngSubmit)="onCreateInspector()"
+      (ngSubmit)="onCreateInspector(createInspectorForm)"
       #createInspectorForm="ngForm"
       name="create-inspector-form"
     >
       <mat-form-field class="w-full">
+        <mat-label> Site ID </mat-label>
         <input
           matInput
           placeholder="Site ID"
@@ -36,17 +38,19 @@ export interface CreateInspectorPayload {
             siteIdControl.invalid &&
             (siteIdControl.dirty || siteIdControl.touched)
           "
-          >Site ID is required.</mat-error
         >
+          Site ID is required.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="w-full">
+        <mat-label> Inspector Owner </mat-label>
         <input
           matInput
           placeholder="Inspector Owner"
           name="create-inspector-form-inspector-owner"
           #inspectorIdControl="ngModel"
-          [(ngModel)]="inspector.owner"
+          [(ngModel)]="model.owner"
           required
           [disabled]="disabled"
         />
@@ -55,8 +59,9 @@ export interface CreateInspectorPayload {
             inspectorIdControl.invalid &&
             (inspectorIdControl.dirty || inspectorIdControl.touched)
           "
-          >Inspector Owner is required.</mat-error
         >
+          Inspector Owner is required.
+        </mat-error>
       </mat-form-field>
 
       <div class="flex justify-end">
@@ -83,15 +88,23 @@ export interface CreateInspectorPayload {
   standalone: true,
 })
 export class CreateInspectorFormComponent {
+  private readonly _snackBar = inject(MatSnackBar);
+
   @Input() siteId = '';
   @Input() disabled = false;
   @Output() createInspector = new EventEmitter<CreateInspectorPayload>();
   @Output() cancel = new EventEmitter<void>();
 
-  inspector: CreateInspectorModel = { owner: '' };
+  model: CreateInspectorModel = { owner: '' };
 
-  onCreateInspector() {
-    this.createInspector.emit(this.inspector);
+  onCreateInspector(form: NgForm) {
+    if (form.invalid) {
+      this._snackBar.open('⚠️ Invalid form!', undefined, {
+        duration: 3000,
+      });
+    } else {
+      this.createInspector.emit(this.model);
+    }
   }
 
   onCancel() {

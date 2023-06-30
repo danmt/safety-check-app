@@ -1,8 +1,9 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface CreateDeviceModel {
   id: string;
@@ -16,11 +17,12 @@ export interface CreateDevicePayload {
   selector: 'safety-check-app-create-device-form',
   template: `
     <form
-      (ngSubmit)="onCreateDevice()"
+      (ngSubmit)="onCreateDevice(createDeviceForm)"
       #createDeviceForm="ngForm"
       name="create-device-form"
     >
       <mat-form-field class="w-full">
+        <mat-label> Site ID </mat-label>
         <input
           matInput
           placeholder="Site ID"
@@ -36,17 +38,19 @@ export interface CreateDevicePayload {
             siteIdControl.invalid &&
             (siteIdControl.dirty || siteIdControl.touched)
           "
-          >Site ID is required.</mat-error
         >
+          Site ID is required.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="w-full">
+        <mat-label> Device ID </mat-label>
         <input
           matInput
           placeholder="Device ID"
           name="create-device-form-device-id"
           #deviceIdControl="ngModel"
-          [(ngModel)]="device.id"
+          [(ngModel)]="model.id"
           required
           [disabled]="disabled"
         />
@@ -55,8 +59,9 @@ export interface CreateDevicePayload {
             deviceIdControl.invalid &&
             (deviceIdControl.dirty || deviceIdControl.touched)
           "
-          >Device ID is required.</mat-error
         >
+          Device ID is required.
+        </mat-error>
       </mat-form-field>
 
       <div class="flex justify-end">
@@ -83,15 +88,23 @@ export interface CreateDevicePayload {
   standalone: true,
 })
 export class CreateDeviceFormComponent {
+  private readonly _snackBar = inject(MatSnackBar);
+
   @Input() siteId = '';
   @Input() disabled = false;
   @Output() createDevice = new EventEmitter<CreateDevicePayload>();
   @Output() cancel = new EventEmitter<void>();
 
-  device: CreateDeviceModel = { id: '' };
+  model: CreateDeviceModel = { id: '' };
 
-  onCreateDevice() {
-    this.createDevice.emit(this.device);
+  onCreateDevice(form: NgForm) {
+    if (form.invalid) {
+      this._snackBar.open('⚠️ Invalid form!', undefined, {
+        duration: 3000,
+      });
+    } else {
+      this.createDevice.emit(this.model);
+    }
   }
 
   onCancel() {

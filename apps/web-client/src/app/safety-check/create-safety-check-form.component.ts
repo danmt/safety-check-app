@@ -1,12 +1,13 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface CreateSafetyCheckModel {
   id: string;
-  durationInDays: number;
+  durationInDays: number | null;
 }
 
 export interface CreateSafetyCheckPayload {
@@ -18,11 +19,12 @@ export interface CreateSafetyCheckPayload {
   selector: 'safety-check-app-create-safety-check-form',
   template: `
     <form
-      (ngSubmit)="onCreateSafetyCheck()"
+      (ngSubmit)="onCreateSafetyCheck(createSafetyCheckForm)"
       #createSafetyCheckForm="ngForm"
       name="create-safety-check-form"
     >
       <mat-form-field class="w-full">
+        <mat-label> Site ID </mat-label>
         <input
           matInput
           placeholder="Site ID"
@@ -44,6 +46,7 @@ export interface CreateSafetyCheckPayload {
       </mat-form-field>
 
       <mat-form-field class="w-full">
+        <mat-label> Device ID </mat-label>
         <input
           matInput
           placeholder="Device ID"
@@ -65,12 +68,13 @@ export interface CreateSafetyCheckPayload {
       </mat-form-field>
 
       <mat-form-field class="w-full">
+        <mat-label> Safety Check ID </mat-label>
         <input
           matInput
           placeholder="Safety Check ID"
           name="create-safety-check-form-safety-check-id"
           #safetyCheckIdControl="ngModel"
-          [(ngModel)]="safetyCheck.id"
+          [(ngModel)]="model.id"
           required
           [disabled]="disabled"
         />
@@ -79,17 +83,19 @@ export interface CreateSafetyCheckPayload {
             safetyCheckIdControl.invalid &&
             (safetyCheckIdControl.dirty || safetyCheckIdControl.touched)
           "
-          >Safety Check ID is required.</mat-error
         >
+          Safety Check ID is required.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="w-full">
+        <mat-label> Duration in days </mat-label>
         <input
           matInput
           placeholder="Duration in days"
           name="create-safety-check-form-safety-duration-in-days"
           #durationInDaysControl="ngModel"
-          [(ngModel)]="safetyCheck.durationInDays"
+          [(ngModel)]="model.durationInDays"
           required
           [disabled]="disabled"
         />
@@ -116,7 +122,7 @@ export interface CreateSafetyCheckPayload {
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="createSafetyCheckForm.invalid || disabled"
+          [disabled]="disabled"
         >
           Create
         </button>
@@ -127,16 +133,27 @@ export interface CreateSafetyCheckPayload {
   standalone: true,
 })
 export class CreateSafetyCheckFormComponent {
+  private readonly _snackBar = inject(MatSnackBar);
+
   @Input() siteId = '';
   @Input() deviceId = '';
   @Input() disabled = false;
   @Output() createSafetyCheck = new EventEmitter<CreateSafetyCheckPayload>();
   @Output() cancel = new EventEmitter<void>();
 
-  safetyCheck: CreateSafetyCheckModel = { id: '', durationInDays: 0 };
+  model: CreateSafetyCheckModel = { id: '', durationInDays: null };
 
-  onCreateSafetyCheck() {
-    this.createSafetyCheck.emit(this.safetyCheck);
+  onCreateSafetyCheck(form: NgForm) {
+    if (form.invalid || this.model.durationInDays === null) {
+      this._snackBar.open('⚠️ Invalid form!', undefined, {
+        duration: 3000,
+      });
+    } else {
+      this.createSafetyCheck.emit({
+        id: this.model.id,
+        durationInDays: this.model.durationInDays,
+      });
+    }
   }
 
   onCancel() {

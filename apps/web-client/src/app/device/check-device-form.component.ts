@@ -1,8 +1,9 @@
 import { NgIf } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface CheckDeviceModel {
   siteId: string;
@@ -18,11 +19,12 @@ export interface CheckDevicePayload {
   selector: 'safety-check-app-check-device-form',
   template: `
     <form
-      (ngSubmit)="onCheckDevice()"
+      (ngSubmit)="onCheckDevice(checkDeviceForm)"
       #checkDeviceForm="ngForm"
       name="check-device-form"
     >
       <mat-form-field class="w-full">
+        <mat-label> Site ID </mat-label>
         <input
           matInput
           placeholder="Site ID"
@@ -37,11 +39,13 @@ export interface CheckDevicePayload {
             siteIdControl.invalid &&
             (siteIdControl.dirty || siteIdControl.touched)
           "
-          >Site ID is required.</mat-error
         >
+          Site ID is required.
+        </mat-error>
       </mat-form-field>
 
       <mat-form-field class="w-full">
+        <mat-label> Device ID </mat-label>
         <input
           matInput
           placeholder="Device ID"
@@ -56,8 +60,9 @@ export interface CheckDevicePayload {
             deviceIdControl.invalid &&
             (deviceIdControl.dirty || deviceIdControl.touched)
           "
-          >Device ID is required.</mat-error
         >
+          Device ID is required.
+        </mat-error>
       </mat-form-field>
 
       <div class="flex justify-end">
@@ -73,7 +78,7 @@ export interface CheckDevicePayload {
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="checkDeviceForm.invalid || disabled"
+          [disabled]="disabled"
         >
           Check
         </button>
@@ -84,6 +89,8 @@ export interface CheckDevicePayload {
   standalone: true,
 })
 export class CheckDeviceFormComponent {
+  private readonly _snackBar = inject(MatSnackBar);
+
   @Input() siteId = '';
   @Input() disabled = false;
   @Output() checkDevice = new EventEmitter<CheckDevicePayload>();
@@ -91,8 +98,14 @@ export class CheckDeviceFormComponent {
 
   model: CheckDeviceModel = { siteId: '', deviceId: '' };
 
-  onCheckDevice() {
-    this.checkDevice.emit(this.model);
+  onCheckDevice(form: NgForm) {
+    if (form.invalid) {
+      this._snackBar.open('⚠️ Invalid form!', undefined, {
+        duration: 3000,
+      });
+    } else {
+      this.checkDevice.emit(this.model);
+    }
   }
 
   onCancel() {
