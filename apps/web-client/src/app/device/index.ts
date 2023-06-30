@@ -1,3 +1,5 @@
+export * from './check-device-form.component';
+export * from './check-device-modal.component';
 export * from './create-device-form.component';
 export * from './create-device-modal.component';
 export * from './device-api.service';

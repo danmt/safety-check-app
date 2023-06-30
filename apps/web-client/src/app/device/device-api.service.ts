@@ -1,19 +1,24 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { AnchorProvider, Program } from '@coral-xyz/anchor';
 import { ConnectionStore, WalletStore } from '@heavy-duty/wallet-adapter';
 import { PublicKey, SystemProgram } from '@solana/web3.js';
 import {
   BehaviorSubject,
-  Observable,
   combineLatest,
   concatMap,
   firstValueFrom,
+  Observable,
 } from 'rxjs';
 import { ConnectionService } from '../core';
 import { IDL, SafetyCheckManager } from '../safety_check_manager';
 import { Device } from './device.model';
 
 export interface CreateDeviceParams {
+  siteId: string;
+  deviceId: string;
+}
+
+export interface CheckDeviceParams {
   siteId: string;
   deviceId: string;
 }
@@ -114,7 +119,19 @@ export class DeviceApiService {
         device: devicePubkey,
       })
       .rpc();
+  }
 
-    console.log('success');
+  async checkDevice(params: CheckDeviceParams) {
+    const devices = await firstValueFrom(this.devices$);
+    const device = devices.find(
+      (device) =>
+        device.siteId === params.siteId && device.id === params.deviceId
+    );
+
+    if (!device) {
+      throw new Error('Device not found');
+    }
+
+    return device.expiresAt && device.expiresAt.getTime() > Date.now();
   }
 }
