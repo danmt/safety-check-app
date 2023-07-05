@@ -83,6 +83,7 @@ export interface CreateSafetyCheckPayload {
           [(ngModel)]="model.durationInDays"
           required
           [disabled]="disabled"
+          type="number"
         />
         <mat-error *ngIf="durationInDaysControl.invalid && submitted">
           Duration is required.
