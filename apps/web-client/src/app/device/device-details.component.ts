@@ -10,65 +10,70 @@ import { DeviceApiService } from './device-api.service';
 @Component({
   selector: 'safety-check-app-device-details',
   template: `
-    <div *ngIf="device$ | async as device" class="p-4">
-      <div class="flex gap-1 items-center mb-4">
-        <a [routerLink]="['/sites', device.siteId]" class="underline">
-          {{ device.siteId }}
-        </a>
-        <mat-icon>chevron_right</mat-icon>
-        <span>
-          {{ device.id }}
-        </span>
-      </div>
+    <section *ngIf="device$ | async as device">
+      <header
+        class="w-full h-64 bg-[url('assets/images/device-details-hero.png')] bg-cover flex items-end"
+      >
+        <div class="w-full px-8 py-4 bg-black bg-opacity-50">
+          <h2 class="text-4xl">Device Details</h2>
+          <div class="flex gap-1 items-center">
+            <a [routerLink]="['/']" class="underline"> Home </a>
+            <mat-icon>chevron_right</mat-icon>
+            <a [routerLink]="['/sites', device.siteId]" class="underline">
+              {{ device.siteId }}
+            </a>
+            <mat-icon>chevron_right</mat-icon>
+            <span>
+              {{ device.id }}
+            </span>
+          </div>
+        </div>
+      </header>
 
-      <section class="flex flex-col gap-4">
-        <div>
-          <mat-card class="p-4">
-            <h2
-              class="pl-4 py-2 bg-black bg-opacity-10 border-l-4 border-teal-400 text-xl mb-2"
-            >
-              Device Details
-            </h2>
+      <div class="p-4">
+        <mat-card class="p-4 mb-4">
+          <h2
+            class="pl-4 py-2 bg-black bg-opacity-10 border-l-4 border-teal-400 text-xl mb-2"
+          >
+            Info
+          </h2>
 
-            <p>
-              ID: {{ device.id }} (
-              <span
-                class="w-3 h-3 inline-block rounded-full"
-                [ngClass]="{
-                  'bg-red-500':
-                    !device.expiresAt || now >= device.expiresAt.getTime(),
-                  'bg-green-500':
-                    device.expiresAt && now < device.expiresAt.getTime()
-                }"
-              ></span>
-              <span class="uppercase">
-                {{
+          <p>
+            ID: {{ device.id }} (
+            <span
+              class="w-3 h-3 inline-block rounded-full"
+              [ngClass]="{
+                'bg-red-500':
+                  !device.expiresAt || now >= device.expiresAt.getTime(),
+                'bg-green-500':
                   device.expiresAt && now < device.expiresAt.getTime()
-                    ? 'safe'
-                    : 'unsafe'
-                }}
-              </span>
-              )
-            </p>
-            <p>Public Key: {{ device.publicKey.toBase58() }}</p>
-            <p>Site ID: {{ device.siteId }}</p>
-            <p>Inspector: {{ device.inspector?.toBase58() ?? '-' }}</p>
-            <p>
-              Last Safety Check Public Key:
-              {{ device.lastSafetyCheck?.toBase58() ?? '-' }}
-            </p>
-            <p>
-              Expires at:
-              {{ device.expiresAt ? (device.expiresAt | date) : '-' }}
-            </p>
-          </mat-card>
-        </div>
+              }"
+            ></span>
+            <span class="uppercase">
+              {{
+                device.expiresAt && now < device.expiresAt.getTime()
+                  ? 'safe'
+                  : 'unsafe'
+              }}
+            </span>
+            )
+          </p>
+          <p>Public Key: {{ device.publicKey.toBase58() }}</p>
+          <p>Site ID: {{ device.siteId }}</p>
+          <p>Inspector: {{ device.inspector?.toBase58() ?? '-' }}</p>
+          <p>
+            Last Safety Check Public Key:
+            {{ device.lastSafetyCheck?.toBase58() ?? '-' }}
+          </p>
+          <p>
+            Expires at:
+            {{ device.expiresAt ? (device.expiresAt | date) : '-' }}
+          </p>
+        </mat-card>
 
-        <div>
-          <safety-check-app-safety-check-list></safety-check-app-safety-check-list>
-        </div>
-      </section>
-    </div>
+        <safety-check-app-safety-check-list></safety-check-app-safety-check-list>
+      </div>
+    </section>
   `,
   styleUrls: [],
   standalone: true,

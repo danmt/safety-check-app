@@ -50,7 +50,7 @@ import { InspectorApiService } from './inspector-api.service';
                   '/sites',
                   siteId,
                   'inspectors',
-                  inspector.owner.toBase58()
+                  inspector.publicKey.toBase58()
                 ]"
                 class="text-blue-400 underline"
               >

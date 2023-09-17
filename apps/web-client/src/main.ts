@@ -31,7 +31,7 @@ bootstrapApplication(AppComponent, {
           component: SafetyCheckDetailsComponent,
         },
         {
-          path: 'sites/:siteId/inspectors/:owner',
+          path: 'sites/:siteId/inspectors/:publicKey',
           component: InspectorDetailsComponent,
         },
         {
