@@ -24,8 +24,6 @@ import { SiteApiService } from './site-api.service';
             >
               New
             </button>
-
-            <button mat-raised-button (click)="onReloadSites()">Reload</button>
           </div>
         </div>
       </header>
@@ -69,10 +67,6 @@ export class SiteListComponent {
   private readonly _dialog = inject(MatDialog);
 
   readonly sites$ = this._siteApiService.sites$;
-
-  onReloadSites() {
-    this._siteApiService.reloadSites();
-  }
 
   openCreateSiteModal() {
     this._dialog.open(CreateSiteModalComponent);

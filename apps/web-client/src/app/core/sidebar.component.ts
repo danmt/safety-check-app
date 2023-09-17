@@ -13,6 +13,10 @@ import {
   HdWalletIconComponent,
 } from '@heavy-duty/wallet-adapter-cdk';
 import { HdWalletModalTriggerDirective } from '@heavy-duty/wallet-adapter-material';
+import { DeviceApiService } from '../device';
+import { InspectorApiService } from '../inspector';
+import { SafetyCheckApiService } from '../safety-check';
+import { SiteApiService } from '../site';
 import { ConnectionService } from './connection.service';
 
 @Component({
@@ -119,6 +123,15 @@ import { ConnectionService } from './connection.service';
               Program ID is required.
             </mat-error>
           </mat-form-field>
+
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="onReload()"
+            class="w-full"
+          >
+            Reload
+          </button>
         </div>
       </mat-sidenav>
 
@@ -146,6 +159,10 @@ import { ConnectionService } from './connection.service';
 })
 export class SidebarComponent {
   private readonly _connectionService = inject(ConnectionService);
+  private readonly _siteApiService = inject(SiteApiService);
+  private readonly _deviceApiService = inject(DeviceApiService);
+  private readonly _inspectorApiService = inject(InspectorApiService);
+  private readonly _safetyCheckApiService = inject(SafetyCheckApiService);
 
   readonly rpcEndpoint$ = this._connectionService.rpcEndpoint$;
   readonly programId$ = this._connectionService.programId$;
@@ -156,5 +173,12 @@ export class SidebarComponent {
 
   onProgramIdChange(programId: string) {
     this._connectionService.setProgramId(programId);
+  }
+
+  onReload() {
+    this._siteApiService.reloadSites();
+    this._deviceApiService.reloadDevices();
+    this._inspectorApiService.reloadInspectors();
+    this._safetyCheckApiService.reloadSafetyChecks();
   }
 }

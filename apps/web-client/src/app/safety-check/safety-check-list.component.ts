@@ -28,10 +28,6 @@ import { SafetyCheckApiService } from './safety-check-api.service';
             >
               New
             </button>
-
-            <button mat-raised-button (click)="onReloadSafetyChecks()">
-              Reload
-            </button>
           </div>
         </header>
 
@@ -134,10 +130,6 @@ export class SafetyCheckListComponent {
     )
   );
   readonly now = Date.now();
-
-  onReloadSafetyChecks() {
-    this._safetyCheckApiService.reloadSafetyChecks();
-  }
 
   openCreateSafetyCheckModal() {
     this._dialog.open(CreateSafetyCheckModalComponent, {

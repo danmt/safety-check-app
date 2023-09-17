@@ -28,10 +28,6 @@ import { DeviceApiService } from './device-api.service';
             >
               New
             </button>
-
-            <button mat-raised-button (click)="onReloadDevices()">
-              Reload
-            </button>
           </div>
         </header>
 
@@ -113,10 +109,6 @@ export class DeviceListComponent {
     map((devices) => devices.filter((device) => device.siteId === this.siteId))
   );
   readonly now = Date.now();
-
-  onReloadDevices() {
-    this._deviceApiService.reloadDevices();
-  }
 
   openCreateDeviceModal() {
     this._dialog.open(CreateDeviceModalComponent, {

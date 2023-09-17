@@ -28,10 +28,6 @@ import { InspectorApiService } from './inspector-api.service';
             >
               New
             </button>
-
-            <button mat-raised-button (click)="onReloadInspectors()">
-              Reload
-            </button>
           </div>
         </header>
 
@@ -84,10 +80,6 @@ export class InspectorListComponent {
       inspectors.filter((inspector) => inspector.siteId === this.siteId)
     )
   );
-
-  onReloadInspectors() {
-    this._inspectorApiService.reloadInspectors();
-  }
 
   openCreateInspectorModal() {
     this._dialog.open(CreateInspectorModalComponent, {
