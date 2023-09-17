@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent, SidebarComponent } from './core';
+import { ConnectionStore } from '@heavy-duty/wallet-adapter';
+import { ConnectionService, NavbarComponent, SidebarComponent } from './core';
 
 @Component({
   selector: 'safety-check-app-root',
@@ -18,4 +19,11 @@ import { NavbarComponent, SidebarComponent } from './core';
   standalone: true,
   imports: [RouterOutlet, NavbarComponent, SidebarComponent],
 })
-export class AppComponent {}
+export class AppComponent implements OnInit {
+  private readonly _connectionStore = inject(ConnectionStore);
+  private readonly _connectionService = inject(ConnectionService);
+
+  ngOnInit() {
+    this._connectionStore.setEndpoint(this._connectionService.rpcEndpoint$);
+  }
+}

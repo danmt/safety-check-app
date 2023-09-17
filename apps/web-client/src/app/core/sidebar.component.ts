@@ -1,8 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
-import { ConnectionStore } from '@heavy-duty/wallet-adapter';
 import {
   HdObscureAddressPipe,
   HdWalletAdapterDirective,
@@ -84,16 +83,11 @@ import { ConnectionService } from './connection.service';
     HdWalletAdapterDirective,
   ],
 })
-export class SidebarComponent implements OnInit {
-  private readonly _connectionStore = inject(ConnectionStore);
+export class SidebarComponent {
   private readonly _connectionService = inject(ConnectionService);
 
   readonly rpcEndpoint$ = this._connectionService.rpcEndpoint$;
   readonly programId$ = this._connectionService.programId$;
-
-  ngOnInit() {
-    this._connectionStore.setEndpoint(this.rpcEndpoint$);
-  }
 
   onRpcEndpointChange(rpcEndpoint: string) {
     this._connectionService.setRpcEndpoint(rpcEndpoint);
