@@ -10,37 +10,43 @@ import { SiteApiService } from './site-api.service';
 @Component({
   selector: 'safety-check-app-site-details',
   template: `
-    <section class="flex flex-col gap-4 p-4">
-      <div class="basis-full">
-        <mat-card class="p-4" *ngIf="site$ | async as site">
-          <h2
-            class="pl-4 py-2 bg-black bg-opacity-10 border-l-4 border-teal-400 text-xl mb-2"
-          >
-            Site Details
-          </h2>
-
-          <p>ID: {{ site.id }}</p>
-          <p>Public Key: {{ site.publicKey.toBase58() }}</p>
-          <p>Authority: {{ site.authority.toBase58() }}</p>
-          <p>
-            Devices Status: {{ safeDevicesCount$ | async }}/{{
-              devicesCount$ | async
-            }}
-          </p>
-          <p>Warnings: {{ unsafeDevicesCount$ | async }}</p>
-        </mat-card>
+    <div class="p-4" *ngIf="site$ | async as site">
+      <div class="flex gap-1 items-center mb-4">
+        <span>{{ site.id }}</span>
       </div>
 
-      <div class="flex gap-4">
-        <div class="flex-1">
-          <safety-check-app-device-list></safety-check-app-device-list>
+      <section class="flex flex-col gap-4">
+        <div class="basis-full">
+          <mat-card class="p-4">
+            <h2
+              class="pl-4 py-2 bg-black bg-opacity-10 border-l-4 border-teal-400 text-xl mb-2"
+            >
+              Site Details
+            </h2>
+
+            <p>ID: {{ site.id }}</p>
+            <p>Public Key: {{ site.publicKey.toBase58() }}</p>
+            <p>Authority: {{ site.authority.toBase58() }}</p>
+            <p>
+              Devices Status: {{ safeDevicesCount$ | async }}/{{
+                devicesCount$ | async
+              }}
+            </p>
+            <p>Warnings: {{ unsafeDevicesCount$ | async }}</p>
+          </mat-card>
         </div>
 
-        <div class="flex-1">
-          <safety-check-app-inspector-list></safety-check-app-inspector-list>
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <safety-check-app-device-list></safety-check-app-device-list>
+          </div>
+
+          <div class="flex-1">
+            <safety-check-app-inspector-list></safety-check-app-inspector-list>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   `,
   styleUrls: [],
   standalone: true,
